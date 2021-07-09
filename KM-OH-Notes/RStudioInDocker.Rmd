@@ -1,0 +1,84 @@
+---
+title: "Running R Studio in Docker"
+author: "Kevin"
+date: "3/9/2021"
+output: pdf_document
+---
+
+# Purpose
+
+This document will focus on how to set up RStudio to run in docker. This allows you to set up your Rstudio compute environment in a way that makes your code highly reproducible and consistent across users. 
+
+## Ways to Run RStudio
+In general for the w203 class, there are 3 options that you have for running R studio, from best to worst, the options are:
+
+1. **Run RStudio on the Berkeley Datahub** - This is a personal cloud instance that is available to all Berkeley students. There is no personal maintenance or setup needed. There will be no dependency issues. All of the packages used are well vetted.  The only downside is that there are _occassionally_ reliability issues. [datahub.berkeley.edu](datahub.berkeley.edu).
+2. **Run RStudio out of a docker container** - Docker is a compute environment where you can set up small virtual machines (known as _containers_) on your local computer. The machines can be torn down and restarted easily. You can download pre-built containers from the makers of Rstudio. The packages inside are _"guaranteed"_ to play nicely together. If you are working in a team, you can all download the same image and guarantee that everyone gets the same results including anyone who wants to reproduce your work. The downside is that initial setup is a bit hairy and honestly just a little outside of the scope of this class.
+3. **Run R locally on your own machine** - This initially sounds attractive, but **it quickly becomes a nightmare**. You will run into _impossible to untangle_ **dependency issues** very quickly. If you're working on a team, your output will look different from your teammates. Your professors may not be able to run your code and we will not be able to detangle your local web of dependencies.
+
+----
+
+# Setting up Docker
+
+## Installing Docker
+
+Before you can use docker, you need to install it. I recommend just going with the docker desktop app. Install instructions for various platforms can be found on docker's website. [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+
+- Mac and Linux are going to be easiest to install docker on 
+- Windows will be more difficult (since it is DOS based instead of Unix based)
+  - You need windows 10
+  - There are different versions for Pro/Enterprise/Education and Home editions
+  - You can upgrade your Windows OS for free as a student through Berkeley. ([link](https://software.berkeley.edu/microsoft-operating-system))
+  
+## Getting a docker image
+Once you have docker installed, choose an image to work from. You're going to want to pull one from a reputable source to ensure that there's no weird dependency issues. I recommend the **rocker project** ([https://www.rocker-project.org](https://www.rocker-project.org)). The complete list of available images on the rocker project can be found on their docker hub page ([link](https://hub.docker.com/u/rocker)) which is the actual place that docker will download them from. Or on the github page for the project ([link](https://github.com/rocker-org/rocker)). 
+
+You can also try pulling the docker images that Alex has put together for the w241 class or for his reserch projects ([link to alex on docker hub](https://hub.docker.com/u/dalexhughes)). Personally, I ran all of my homework for w241 out of his `dalexhughes/florida_voters:tex` environment.
+
+Heads up for your other classes, the organization that puts together the jupyter notebooks also has official docker images which contain pre-built containers that have most of the things that you could need for the MIDS program already inside. The documentation for those is here ([https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html)) for when and if you need them in the future
+
+**Probably for this class, you will want to use the `rocker/verse:latest` container which has the most up to date versions of rstudio, the tidyverse packages, core r packages, and a tex installation.** If you want to potentially re-use this exact environment in the future then you should pull a versioned image such as `rocker/verse:4.0.1`. See the "_tags_" section for the container on docker hub for the names of versioned editions of the containers ([https://hub.docker.com/r/rocker/verse/tags](https://hub.docker.com/r/rocker/verse/tags)).
+
+
+### Pull docker image
+
+Before you actually run a container, you'll want to "pull" it to your local machine which is just copying it down from docker hub. This is the command to run to run get the latest rocker `verse` image. Just open up the termnal on your computer type in the following and hit enter.
+
+```shell
+docker pull rocker/verse:latest 
+```
+
+You'll see a bunch of activity in your terminal window as the image is pulled down to your machine.
+
+### Bring up container
+
+Once the image is on your local machine, you'll have to actually start it up. From your terminal window, you're going to type:
+
+```shell
+docker run -d --rm -v ~/Documents/MIDS/:/home/rstudio/kitematic/ --name rstudio -p 8788:8787 -e PASSWORD=foo rocker/verse:latest
+```
+
+**When you do so, replace the "`-v ~/Documents/MIDS/:/home/rstudio/kitematic/`" with `-v absolute/path/to/local/directory/you/want/to/access/from/RStudio/:/home/rstudio/kitematic/`**
+
+Since this is a difficult to remember incantation, you can store it in a `.sh` file for convenience and run it with `bash QuickStartupScript.sh` from your terminal window. I've attached a sample that you can use to the slack post where you found this file.
+
+### Accessing Your Container.
+
+Once the container is up, **type `localhost:8788` into the web address bar of your browser**. (_This is connecting you to your machine's port 8788 which you set up your docker container's port 8787 to go out to in the magical incantation in the last section._)
+
+You should see a login page at this point. In the user field type `rstudio`. In the password field type `foo`. 
+
+_Voila!_ You've got a container up and running. 
+
+### Tear Down Container
+
+When you're ready to bring your container down, use the command `docker stop rstudio`. This will free up your local compute resources until next time you need it.
+
+---
+
+## (Advanced) Creating your own docker image or expanding an existing image.
+
+This is beyond the scope of this document. If you're interested in expanding an existing docker image (_say the `rocker/verse` image is missing a library that you just **need**_), here are a few resources that you can check out.
+
+- Complete container building instrutions from U of Wisconson with a  `python` focus. [https://chtc.cs.wisc.edu/docker-build.shtml](https://chtc.cs.wisc.edu/docker-build.shtml)
+- Less comprehensive help from the Rocker project that is specific to `r`. [https://www.rocker-project.org/use/extending/](https://www.rocker-project.org/use/extending/)

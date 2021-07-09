@@ -1,0 +1,125 @@
+---
+title: "KM_Wk5_OH"
+author: "Kevin Martin"
+date: "9/27/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Agenda
+
+* CLT Examples from the Instructional Team
+  * http://www.statistics.wtf/CLT/
+  * https://mids-203.shinyapps.io/Central-Limit-Theorem/
+* Example of CLT
+  * Devore and Berk Example 6.8 ([link to library copy](https://link-springer-com.libproxy.berkeley.edu/book/10.1007%2F978-1-4614-0391-3))
+* Quirky R things
+* Homework
+
+## CLT
+
+#### Arnow & Miller
+
+$$
+\frac{\sqrt{n}*(\overline{X} - \mu)}{\sigma} = Z \\
+\\
+Z\to^d N(0,1)
+$$
+
+English: If you calculate the Z statistic for a bunch of observations of the sample mean (using the formula above), you will observe that the distribution of the sample means appoaches the standard normal curve as n approaches infinity.
+
+#### Devore & Berk (textbook linked above)
+
+$$
+\lim_{n\to\infty} P \left( \frac{\overline{X} - \mu}{\sigma / \sqrt{n}} \leq z \right) = P(Z \leq z) = \Phi(z)
+$$
+
+English: (just another way to try and grok the CLT) The probability of getting a Z statistic ($\frac{\overline{X} - \mu}{\sigma / \sqrt{n}}$) less than some specific number can be obtained using the cumulative distribution funciton of the standard normal distribution as number of samples (to form $\overline{X}$ approaches infinity. (Another way of saying that the Z statistic fits on the standard normal for large n)
+
+### Big Idea
+For **almost ANY** distribution (bernoulli, uniform, normal ...), **if your sample size is large enough**, the probability density function of the **sample mean** will be a normal distrbution. AND, we can make statements about the shape of that distribution. 
+
+In future weeks:
+
+* We will see that just knowing the size, mean, and std.dev of the sample, we can make precise statements about how represetnative we expect our sample to be. We'll be able to precisely state a range for where we expect the true sample mean to be.
+* We will use the fact that the sample mean is normally distributed to make the math work out for data sets where we know that the data itself is non-normal, but we have a lot of samples and want to take advantage of some of the properties of the normal curve.
+
+#### How many is "enough samples"?
+
+30 is the general rule of thumb. If you have more than 30 samples, you usually assume that you can use the CLT.
+
+#### What is the shape of the distribution of the sampling mean?
+
+*What are the mean and standard deviationof the sample mean? (if we DON'T normalize it)*
+
+mean = $\mu$ (population mean)
+
+standard deviation = $\sigma/\sqrt(n)$ (pop std deviation)/(square root of sample size)
+
+## Example from Devore and Berk (Example 6.8)
+
+When a batch of a certain chemical product is prepared, the amount of a particular
+impurity in the batch is a random variable with mean value 4.0 g and standard
+deviation 1.5 g. If 50 batches are independently prepared, what is the (approximate)
+probability that the sample average amount of impurity X is between 3.5 and 3.8 g?
+
+#### Problem Setup
+
+Find $P(3.5 \leq \overline{X} \leq 3.8)$
+
+$$
+\begin{aligned}
+n &= 50   \\
+\mu &=  4   \\
+\sigma &= 1.5   \\
+\\
+Z &=\frac{\sqrt{n}*(\overline{X} - \mu)}{\sigma}
+\end{aligned}
+$$
+
+```{r calc Z , echo=TRUE}
+
+Z <- function(n, mu, sig, x_bar){
+  return(sqrt(n)*(x_bar - mu)/sig)
+}
+  
+Z_3.5 <- Z(50, 4, 1.5, 3.5)
+Z_3.8 <- Z(50, 4, 1.5, 3.8)
+# what is the "." doing in these variable names? 
+  # the dot is just another character in variable and function names in R. use it like you would use a "_"
+
+P_3.8_to_3.5 <- pnorm(Z_3.8) - pnorm(Z_3.5) #plug into the CDF of the standard normal 
+
+# Pro-Tip: "Cmd+Shift+Enter" executes the whole chunk.
+```
+
+Answer: The probability that the sample average impurity is between 3.5 and 3.8 is **`r P_3.8_to_3.5`**. 
+
+
+#### _norm Cheet Sheet
+
+`dnorm(x)` $\rightarrow$ value of the probability density function at x
+
+`pnorm(x)` $\rightarrow$ value of the cumulative distribution function at x
+
+`qnorm(F)` $\rightarrow$ the x that leads to a cdf with value F
+
+`rnorm(n)` $\rightarrow$ returns an n length vector with random observations from a normal distribution. 
+
+Note that R uses this convention for almost any distribution you can think of. If you wnated to work with the chi-squared ditsribution, you would use: `dchisq`, `pchisq`, etc. 
+
+```{r demo the _norm() functions, echo=TRUE}
+#```{r demo the _norm() functions, echo=FALSE}
+
+# what would 'echo = FALSE' in a chunk definition do? 
+  # echo = FALSE makes it so that the output is included in the knitted file, but not the code block itself
+  # include = FALSE would make it so that neither the output nor the code block are in the knitted file
+
+dnorm(Inf) # should be 0
+pnorm(0)   # should be 0.5
+qnorm(0.5) # should be 0
+rnorm(5)   # return a vector length 5
+```

@@ -1,0 +1,51 @@
+---
+title: "Kmart's Week 3 Office Hours"
+author: "Kevin Martin"
+date: "1/21/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Agenda
+
+* Helpful References
+* Complete Expresssion for dice roll
+* Questions about the Async
+* Questions about the HW
+
+## Misc Resources
+
+* [NIST Gallery of Distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm)
+  * Feel free to use these pre-solved solutions for Expectation & Variance of common distributions. Make sure that you **cite your source** when doing so though, or you will get docked points. I would still encourage you to solve the distributions the "traditional" way on the first few assignments since the distributions that we use in later assignments aren't as easy and well known. 
+* [Wolfram alpha](https://www.wolframalpha.com/input/?i=integrate+%28x-1%29%5E0.5+x+dx+from+0+to+1)
+  * This isn't a calculus class. Our goal isn't to make you suffer too much with complicated integrals. You can use wolfram alpha for some of the trickier stuff. If you do use it, make sure to **cite your source** include a screenshot and a link to your query so that we know how you solved a given integral.
+* [Paul's Notes](https://tutorial.math.lamar.edu/) - [Integration By Parts Notes](https://tutorial.math.lamar.edu/Classes/CalcII/IntegrationByParts.aspx) - [Integration By Parts Examples](https://tutorial.math.lamar.edu/Problems/CalcII/IntegrationByParts.aspx)
+  * Paul's Notes is a super valuable online resource for brushing up on your calculus. You'll need integration by parts for this week's assignment if you solve it the traditional "by hand" way. I've linked the specific sections in the notes for that. 
+
+## Complete Expression for dice roll
+
+You can use this as a template for putting together your complete expressions for probability mass functions (PMFs) and cumulative distribution functions (CDFs). Note that the distinction between $<$ and $\leq$ ends up being very important when writing the (CDFs) of discrete random variables. (It does not matter for CDFs of continuous random variables)
+
+Let $f_X(x)$ be the pmf for the outcomes of a  (6 sided) dice roll
+
+Let $F_X(x)$ be the cdf for the outcomes of a (6 sided) dice roll
+
+$$
+f_X(x) = \begin{cases} \frac{1}{6} & x={1,2,3,4,5,6} \\
+0 & otherwise
+\end{cases}
+$$
+
+$$
+F_X(x) = \begin{cases} 0 & x < 1 \\
+1/6 & 1 \leq x <2 \\
+2/6 & \leq x <3 \\
+3/6 & 3 \leq x <4 \\
+4/6 & 4 \leq x <5 \\
+5/6 & 5 \leq x <6 \\
+1 & 6 \leq x  \\
+\end{cases}
+$$

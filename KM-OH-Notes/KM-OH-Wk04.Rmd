@@ -1,0 +1,94 @@
+---
+title: "Kmart's Week 4 Office Hours"
+author: "Kevin Martin"
+date: "1/28/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Agenda
+
+* Test things
+* Intutions about SD
+* Example Problem
+  * From Devore and Berk ([UC Library Link](https://link-springer-com.libproxy.berkeley.edu/book/10.1007%2F978-1-4614-0391-3))
+  * Law of interated expectations and law of total variance.
+
+## Test Things
+
+### General Overview
+
+  * The test is open for 7 days: between your live session 4 and your live session 5.
+  * You have 3.0 hours to complete the test.  There will be a timer visible on gradescope.  You must upload all solutions before the 3 hours runs out.
+  * The test covers material from units 1,2, and 3 (not unit 4).
+  * Handwritten solutions are absolutely ok (you should not spend time typesetting latex)
+  * The test is open book, open internet (including using Wolfram alpha to compute integrals) but you can’t communicate directly to another human.
+  * The problems tend to get harder from the top of the test to the bottom.
+  * Alex created a practice test (find his post on slack), which will give you a general idea of what the test is like.
+  * We will award partial credit.  We suggest that you write down an attempt for each problem.
+  * We hope the test challenges you and accelerates your learning.  We don’t want you to stress too much (which is why we’re curving grades), so find a healthy balance and good luck this week!
+
+### Kmart's Top Test Tips
+
+* Do NOT attempt to do the test in latex/Rmd. The few students that I saw do this had trouble making it to the end and they tended to have easy math errors that I think they would have caught if they had just written it out.
+* DO give yourself space to work. I had a few people treat paper as a precious commodity and try to cram everything onto one or 2 pages. Again, more avoidable errors on these tests.
+
+### Study resources.
+
+#### Test Specific Resources
+
+* Alex ran a test prep section that was recorded to zoom. [link to recording](https://zoom.us/rec/play/8uft-UEmKag5NxmzlMaBqGiDgr4cHbMFjqI0l8SkF1ZGeJFnC3Y2Fk_2dqSQ4fHJrI2uEoiAP2rqvnHn.pGhin_wsDInSCyxZ)
+* Alex posted a practice test to slack [link to slack post of practice test](https://ucbischool.slack.com/archives/C01HVT8V2BV/p1611631861127300)
+
+#### Probability Cheat Sheets
+
+* [Cheat Sheet from King's College London](https://www.kcl.ac.uk/noneqsys/events/online-resources/probability-theorem.pdf)
+* [Cheat Sheet from Stanford](https://stanford.edu/~shervine/teaching/cme-106/cheatsheet-probability)
+* [Cheat Sheet from Some Dude on the Internet](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf) (very comprehensive, **but give it a once over** since it's **not from a well established source**.)
+
+## Variance/Standard Deviation
+
+#### What IS the standard deviation????
+
+Intuitively, standard deviation is just how far an average point is from the mean. (average being the RMS average).
+
+If we look at a uniform distribution on the interval [0,1], we see that the standard deviation is 0.288. (source:[NIST Gallery of Distributions](https://www.itl.nist.gov/div898/handbook/eda/section3/eda3662.htm))
+
+This is very close to the 0.25 that your gut probably is telling you is the average distance to the mean. The reason that it’s .288 instead of .25 is the use of the RMS measure instead of the absolute value arithmetic mean. 
+
+#### Why is Standard Deviation based on RMS instead of arithmetic mean?
+
+The actual probable reason that we use standard deviation (SD) instead of mean absolute deviation (MD) is tradition and all of the theory and papers and whatnot that has evolved from that tradition.
+
+There was spirited debate about which measure of dispersion to use in the 1910s. Standard deviation won out and it’s just the standard now. Here’s some points in the historical debate:
+
+**SD’s backers:**
+
+* SD is easier to calculate without the aid of a computer than MD is. (not much of an issue these days but it was important in 1910)
+* SD of a sample is more representative of SD in a normally distributed population. (more so than MD of a sample is representative of MD in a normally distributed population)
+* Normal populations are hugely important especially in the context  of central limit theorem.
+* RA Fisher, the most prominent statistician of his day, backed SD
+* In a modern context, the standard deviation is often used as the thing that we try to minimize when running machine learning algorithms. In that situation, the smooth SD funciton works much much better than the "pointy" MD function would. 
+
+**MD’s Backers:**
+
+* MD makes intuitive sense to humans while SD does not.
+* MD of a sample tends to be more representative of MD in a population for most non-normal distributions. (more so than SD)
+* SD is very sensitive to outliers. Squaring the numbers means a single outlier has HUUGE influence over the final SD measure.
+* There are lots of things that don’t hew to normality, (However do note that the Central Limit Theorum does suggest that many summary statistics do.)
+
+We might have a different statistics now if the other side had won the debate, but we are where we are now.
+
+**References for Further Discussion of SD vs MD**
+
+* [Article from University of Leeds](http://www.leeds.ac.uk/educol/documents/00003759.htm)
+* [Good StackExchange Post](https://stats.stackexchange.com/questions/118/why-square-the-difference-instead-of-taking-the-absolute-value-in-standard-devia) (Read the comments on the posts themselves, not just the answer and response)
+
+## Example Problem
+
+Example is from Devore and Berk ([UC Library Link](https://link-springer-com.libproxy.berkeley.edu/book/10.1007%2F978-1-4614-0391-3))
+
+We cover Law of Iterated Expectations and Law of Total Variance for a (discrete) joint probability mass function.

@@ -1,0 +1,124 @@
+---
+title: "Kmart’s Office Hours - Week 7"
+author: "Kevin Martin"
+date: "10/4/2020"
+output: 
+  pdf_document:
+    extra_dependencies: ["float"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.pos = "h", out.extra = "")
+library(data.table)
+library(ggplot2)
+```
+
+## Agenda
+* Label the test figure
+* Type I and type II errors
+* Statistical Power
+  * Example with synthetic data
+
+## Test - labeled
+
+![Label this figure](images/Test_fig.jpg)
+
+1. Test Statistic (T-Statistic in the case of the t-test)
+2. P value (all of the yellow+green area) (in this case our p value is greater than alpha. We do not reject the null)
+3. Alpha values (all of the green) (type 1 error rate. The rate that we reject the null when the null is actually true.)
+4. Rejection Threshold (`qnorm(alpha/2)`)
+
+## Type 1 and Type 2 Errors
+
+### Type 1 Error
+
+![Type 1 Error](images/Type_1.png)
+
+Probability that you reject the null (you reject equality) when you shouldn't 
+
+### Type 2 error
+
+![Type 2 Error](images/Type_2.png)
+
+Probability that you fail to reject the null when you should
+
+## Two-tailed versus One-tailed testing
+
+You just always do 2 tailed testing. Because that's the way that it's done across scientific fields. Across industries. It's a similar level of sacrosanct as the 5 precent alpha. It's basically a universally agreed upon convention. 
+
+Practical reasons you might want a 2 tailed test.
+
+* You can still report surprising results that come out opposite of what you were expecting.
+
+
+## Statistical power example
+
+I wanted to end with a quick demo of the type 2 error rate and statistical power. Statistical power is your ability to detect a difference if one exists. The type 2 error rate is just (1-power). This is important if you are running scientific experiments or A|B testing a website or whatever. How often do you detect a difference that's actually there.
+
+In the example below I have set up 2 groups. One group is the test scores of those that don't go to office hours (control). The other is the test scores of those that do go to office hours (treat)
+
+I have built the groups so that there is actually a 5 point increase associated with going to office hours. We will see if we can actully detect that increase. That will tell us about the statistical power and the type 2 error rate. 
+
+Things that increase type 2 error rate (decrease power)
+
+* More variance in the data
+* Fewer samples
+* Means are closer together. 
+
+Things that decrease the type 2 error rate (increase power)
+
+* Less variance in the data (often by increasing accuracy of measurements)
+* Get more samples
+* Have means that are farther apart (you can't usually do this. DUH!)
+
+```{r}
+# I used a normal distribution for convenience, in general, use the t-distribution when actually sampling.
+
+set.seed(46290)
+
+# set up the distribution for control
+n <- 100 # total number of test participants (treat + control)
+mu_ctrl <- 70 # mean of the control (say mean score on the test)
+sig_ctrl <- 8 # standard deviation of the control group
+
+treat_increase <- 5 # increase associated with being in the treatment group (going to office hours)
+p_treat <- 0.5  #porportion in treatment
+power_size <- 200 # number of runs to see if we detect anything
+conf <- 0.05 # (alpha in our test, (1-confidence level))
+
+# Generate data for science table
+d <- data.table(ctrl = rnorm(n, mean=mu_ctrl, sd = sig_ctrl))
+d[,treat := ctrl + treat_increase]
+
+#assign treatment/control to science table
+n_tr <- round(p_treat*n)
+d[,is_treat := c(rep(1,n_tr),rep(0,(n-n_tr)))]
+
+#set up collector variables
+t_detects <- rep(NA, power_size)
+
+ate <- NA
+# run a couple times to see how often we detect an effect
+for(ii in 1:power_size){
+  d[,is_treat := sample(is_treat)]
+  d[,outcomes:=is_treat*treat + (1-is_treat)*ctrl]
+  t_detects[ii] <- t.test(d[is_treat == 1, outcomes], d[is_treat==0, outcomes])$p.value < conf
+}
+
+print("Fraction detected with t-test (the statistical power)")
+print(sum(t_detects)/power_size)
+print("The type 2 error rate (beta)")
+print(1- sum(t_detects)/power_size)
+```
+
+We are able to detect the difference in scores `r (1- sum(t_detects)/power_size)*100` percent of the time. 
+
+## More information
+
+* More fun statistics and R illustrations from Dr. Allison Horst
+  * https://github.com/allisonhorst/stats-illustrations
+* Get your images where you want in r markdown
+  * Ended up not working as well as I hoped   `¯\_(-_-)_/¯`
+  * https://bookdown.org/yihui/rmarkdown-cookbook/figure-placement.html

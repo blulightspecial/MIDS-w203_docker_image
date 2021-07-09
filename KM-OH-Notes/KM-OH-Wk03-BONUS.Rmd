@@ -1,0 +1,168 @@
+---
+title: "Infinite Finite Variance"
+author: "Kevin Martin"
+date: "11/23/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(data.table)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction and Purpose
+
+A common mistake that people make is using `var(some_finite_data_sample)` and showing that it produces a finite number to show that there was a finite variance in the distribution of a given population . The mistake is this: **IF you evaluate var(x) or cov(x,y) for any finite set of numbers that you can come up with, you will always get a finite number.**
+
+## Functions with Non-Finite Variance versus Sample Variance
+
+We have worked with functions that have infinite variance in this class before. The bonus quesion on HW 3 had a heavy tailed distrubution with infinite variance. A common function with infinite variance is the [Pareto Distibution](https://en.wikipedia.org/wiki/Pareto_distribution) when certain parameters are used. It takes the form $c/x^n$ and is very similar to the function from that homework. (It is implemented in the `actuar` and the `EnvStats` packages but not "base" R). 
+
+Another function that has non-finite variance is **very specifc forms** of the **student's t distribution** (when **df==1** or **df==2**). The df==1 student t distribution (also known as the cauchy distribution) actually has such heavy tails that it doesn’t even have a finite mean. We'll explore the consequences of this by playing with some synthetic data.
+
+```{r verify we CAN take mean and var}
+set.seed(46290) #set a random seed for reproducibility
+
+## Set degrees of freedom we are interested in investigating
+dfs <- c(1,2,3,1000)
+  ## df==1 : non-finite mean and variance
+  ## df==2 : finite mean, non-finite variance
+  ## df==3 : finite mean and variance
+  ## df==1000 : basically a normal dist. finite mean and var.
+
+## Make a data.table to hold everything
+dtsyn <- data.table()
+
+## Synthesize some data from a t distribution for each. Compile in a data.table
+for(dfi in dfs){
+  dtsyn[,sprintf("df_%d",dfi):=rt(1000,df=dfi)]
+}
+
+## Verify that we can actually take means and variances
+dtsyn[,lapply(.SD, mean)]
+dtsyn[,lapply(.SD, var)]
+```
+
+As we see above, we definitely CAN take the mean and the variance for all of our distirbutions. Even though we **know** that the variance for the df==2 and df==1 distributions are non-finite.
+
+```{r calculate means and vars in a loop}
+set.seed(2) #set a random seed for reproducibility
+
+## Take means and standard deviations so we can make some dang histograms
+nobs <- 1000 # number of obs to pull on a given loop
+nloops <- 1000 # number of loops (take a mean and var each loop)
+
+## create some dataframes to collect the means and variances
+dtmeans <- data.table()
+dtvars <- data.table()
+
+## fill the data tables with empty data
+for(dfi in dfs){
+  dtmeans[,sprintf("df_%d",dfi):=rep(0,nloops)]
+  dtvars[,sprintf("df_%d",dfi):=rep(0,nloops)]
+}
+
+for(ii in 1:nloops){
+  # get a new random sample
+  for(dfi in dfs){
+    dtsyn[,sprintf("df_%d",dfi):=rt(1000,df=dfi)]
+  }
+  dtmeans[ii,] <- dtsyn[,lapply(.SD, mean)]
+  dtvars[ii,] <- dtsyn[,lapply(.SD, var)]
+}
+
+summary(dtmeans)
+summary(dtvars)
+```
+
+```{r plot histograms of means}
+
+## build and plot histograms
+for(dfi in dfs){
+  hist(dtmeans[, get(sprintf("df_%d",dfi))])
+  ## need the "get()" so that you can index with a string
+}
+```
+
+```{r plot histograms of variances}
+
+## build and plot histograms
+for(dfi in dfs){
+  hist(dtvars[, get(sprintf("df_%d",dfi))])
+  ## need the "get()" so that you can index with a string
+}
+```
+
+### Analysis and Commentary
+
+We see for every function that we looked at, we were able to get a finite mean and a finite standard deviation for all of them. Even for those functions that we KNOW a priori have non-finite means or variances. 
+
+The way that the non-finite variations and means manifest is occasional outliers in the distribution of means/standard deviations that completely drag our distributions of the means or standard deviations. 
+
+### Another way to think about it
+
+You can think of a non-finite mean/standard deviation as one that **doesn't converge** at large numbers. I will show the mean below, (because it's easier). You could do something similar if you wanted to keep track of a rolling number for the variance.
+
+```{r}
+set.seed(0) #set a random seed for reproducibility
+
+## set number of obsrvations over which we will do our rolling average
+nobs <-  1e5
+
+## Set degrees of freedom we are interested in investigating
+dfsroll <- c(1,2,1000)
+  ## df==1 : non-finite mean 
+  ## df==2 : finite mean
+  ## df==1000 : basically a normal curve (finite mean)
+
+## make a data atable 
+dtroll <- data.table()
+
+## get a new random sample and make a incrementally adjusted mean based on that sample
+  ## plot the incrementally adjusted mean.
+for(dfi in dfsroll){
+  dtroll[,sprintf("df_%d",dfi):= rt(nobs,df=dfi)]
+  # dtroll[,sprintf("df_%d",dfi):=log(abs(rt(nobs,df=dfi)))] #try logging it?
+  dtroll[,sprintf("df_%d_roll",dfi) := cumsum(get(sprintf("df_%d",dfi))) / (1:.N)]
+  plot(dtroll[,get(sprintf("df_%d_roll",dfi))])
+}
+
+
+```
+
+We see a pretty dramatic example with the df==1 t distribution (Cauchy Distribution) that the mean bounces all over the place. After close to 100000 samples, there are a few outliers and the mean goes farther from zero than it ever has. Even though we were able to calculate an arithmetic mean for each step of our sampling procedure, we would have a hard (impossible actually) time ascribing any specific number for the expectation of this cauchy function. 
+
+Contrast that with the df == 2 student t curve. We immediately see that the function is asymptotic towards zero. Even though it is slower to converge than the normal curve, we see that it actually does converge to zero. 
+
+## Takeaways
+
+* **The fact that you can get a finite mean and a finite variance for a given data sample does not indicate that the underlying distribution has a finite mean or variance.**
+  * We knew a priori that several of the funcitons that we sampled from in this excercise had non-finite means or variances.  We calculated the mean and variance **thousands** of times and in everty case we got a finite number. 
+* It's **very hard** to know if a sample comes from a distribution that has sufficiently heavy tails that it has nonfinite variance (or even a non-finite mean). Be suspicious of big skews.
+  * Also notice if you un-comment the line in the "convergence" exercise and transform and log the datat that you largely take care of the non-convergent mean. 
+    * I would proactively log if you suspect a heavy tail or a big skew. (*my views may or may not align with those of your instructors*) 
+    
+## References Resources
+
+* This stats stackexchange post has a great example of someone who used a similar technique to argue that a **sample** is drawn from a distribution with non-finite variance.
+  * https://stats.stackexchange.com/questions/2504/test-for-finite-variance/9143#9143
+* Wikipedia actually has a pretty strong stats game (I would always verify though)
+  * Pareto
+    * https://en.wikipedia.org/wiki/Pareto_distribution
+  * Cauchy
+    * https://en.wikipedia.org/wiki/Cauchy_distribution
+* NIST (National Institute of Standards and Technology - a branch of the US Federal Government)
+  * Student's t
+    * https://www.itl.nist.gov/div898/handbook/eda/section3/eda3664.htm
+  * Cauchy
+    * https://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm
+* Wolfram Mathworld 
+  * more authoritative source for pareto, not as easy to read as wikipedia though
+  * https://mathworld.wolfram.com/ParetoDistribution.html
+* Cross Validated (Statistics StackExchange)
+  * https://stats.stackexchange.com/questions/91512/how-can-a-distribution-have-infinite-mean-and-variance
+  * https://stats.stackexchange.com/questions/255752/why-is-the-variance-of-t-distribution-with-1-and-2-degrees-of-freedom-undefined
+  * https://stats.stackexchange.com/questions/94402/what-is-the-difference-between-finite-and-infinite-variance
+  * https://stats.stackexchange.com/questions/36027/why-does-the-cauchy-distribution-have-no-mean/36037#36037
+* StackOverflow using `get()` to index a data.table with a string
+  * https://stackoverflow.com/questions/12603890/pass-column-name-in-data-table-using-variable
