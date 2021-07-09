@@ -4,10 +4,7 @@
 FROM rocker/verse:4.0.3
 # Add libraries for w203 class
 # See: https://www.rocker-project.org/use/extending/
-RUN touch installR_man.txt installR_help.txt
-RUN man install2.r > installR_man.txt
-RUN install2.r --help > installR_help.txt
-RUN install2.r sandwich stargazer car gridExtra lmtest revealjs  wooldridge
+RUN install2.r sandwich stargazer car gridExtra lmtest revealjs  wooldridge GGally PerformanceAnalytics patchwork moments ggthemes fec16
 # Copy the math review into the folder
 COPY MathReview_v10.Rmd /home/rstudio/
 # Add a (wierd) library so that the math review knits
@@ -25,3 +22,4 @@ RUN Rscript -e "rmarkdown::render('/home/rstudio/KM-OH-Notes/KM-OH-Wk05.Rmd')"
 RUN Rscript -e "rmarkdown::render('/home/rstudio/KM-OH-Notes/KM-OH-Wk06.Rmd')"
 RUN Rscript -e "rmarkdown::render('/home/rstudio/KM-OH-Notes/KM-OH-Wk07.Rmd')"
 RUN Rscript -e "rmarkdown::render('/home/rstudio/KM-OH-Notes/KM-OH-Wk08.Rmd')"
+RUN rm -r -f /home/rstudio/KM-OH-Notes /home/rstudio/MathReview_v10.*
