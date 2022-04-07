@@ -1,15 +1,7 @@
 ---
 title: "RStudio RMarkdown Basics"
 author: "Kevin Martin"
-output: 
-    github_document: default
-    html_document: default
-    pdf_document: default
-knit: (function(inputFile, encoding) {
-  rmarkdown::render(
-    inputFile, encoding = encoding,
-    output_format = c('github_document', 'html_document', 'pdf_document')) 
-    })
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -449,11 +441,20 @@ pi is approximately `r sprintf("%.2e", pi)` in scientific notation
 ## Important LaTeX Functions in General
 
 ### Grouping in LaTeX
+
+```{r grouping bookmark}
+# Dummy code chunk to see where I fail
+```
+
 A generally important concept in LaTeX is that curly braces `{}` are used to group objects that are more than 1 character long that you want to operate on. But for single character expressions, the curly braces are optional. 
 
 So `$x^2$` $x^2$ will behave as well as `$x^{2}$` $x^{2}$ but `$x^12$` $x^12$ is very different output than `$x^{12}$` $x^{12}$ 
 
 ### Spacing in LaTeX
+
+```{r spacing bookmark}
+# Dummy code chunk to see where I fail
+```
 Spacing doesnt matter in latex expressions. Everything is sqeezed in close by default. White space or lack tehreof is treated the same. This can be annoying sometimes. For example $22$ renders the same as $2   2$. In a maybe less contrived example, the $dx$ is always too close to the function being integrated in an integral. $\int xdx$ If you want to give the function some breathing room, you have to artificially add space with one of the functions below. 
 
 - $\Rightarrow\Leftarrow$ No Space
@@ -466,6 +467,10 @@ Spacing doesnt matter in latex expressions. Everything is sqeezed in close by de
 
 ### Summation and integration functions
 
+```{r summation bookmark}
+# Dummy code chunk to see where I fail
+```
+
 Integration: `$\int_{-\infty}^{\infty} f(x)\;dx$` $\int_{-\infty}^{\infty} f(x)\;dx$
 
 [Evaluation Bar](https://math.stackexchange.com/a/52660/818977): $\frac{x^2}{2} \Big|_{x=0}^{x=2} \quad or \quad  \left.\frac{x^2}{2} \right|_{x=0}^{x=2}$
@@ -473,6 +478,10 @@ Integration: `$\int_{-\infty}^{\infty} f(x)\;dx$` $\int_{-\infty}^{\infty} f(x)\
 Riemann Sum: `$\sum_{i=1}^n x_i$` $\sum_{i=1}^n x_i$
 
 ### Basic Expressions 
+
+```{r basics bookmark}
+# Dummy code chunk to see where I fail
+```
 
 **All of these can be found in the "LaTeX Math for Undergrads" cheat sheet that I mentioned at the start of the LaTeX section ([link](http://tug.ctan.org/info/undergradmath/undergradmath.pdf))**
 
@@ -501,6 +510,10 @@ The most important functions within code blocks are `aligned` equations which ke
 
 ### Cases
 
+```{r cases bookmark}
+# Dummy code chunk to see where I fail
+```
+
 Use the `\begin{cases}` and `\end{cases}` wrappers to define piecewise functions
 
 ```
@@ -520,6 +533,10 @@ f(x) = \begin{cases}
 $$
 
 ### Aligned Equations
+
+```{r aligned bookmark}
+# Dummy code chunk to see where I fail
+```
 
 Use the `\begin{aligned}` and `\end{aligned}` wrappers to define a space where you can write aligned functions
 
@@ -567,6 +584,10 @@ $$
 
 ## LaTeX Errors
 
+```{r errors bookmark}
+# Dummy code chunk to see where I fail
+```
+
 The worst part about working with LaTeX in RStudio is the knitting errors that it causes. LaTeX error messages are obscure and unhelpful as a general rule.
 
 Luckily, most of the time the error is attributable to 1 thing, spacing within or adjacent to the LaTeX expressions. The compiler is very picky. It has to do with the intermediate form for how the PDF gets created. Be careful and consistent with your spacing and you'll be fine. 
@@ -584,6 +605,10 @@ Before we get into the most common casuses of errors, let's talk the 3 most impo
 3. **Try Knitting to HTML** - The most fragile part of the system is the conversion to PDF in particular. The way that RStudio/Pandoc renders HTML is much more robust and less sensitive. If you're truly desperate, just knit to HTML and print to PDF from your browser. Often the final project comes out looking just as good. Sometimes it looks better. The extra sending to PDF step might eventually drive you mad though. 
 
 ### Errors from LaTeX Blocks
+
+```{r latex block errors bookmark}
+# Dummy code chunk to see where I fail
+```
 
 There's 1 main thing that causes knitting errors with LaTeX blocks. 
 
@@ -617,6 +642,10 @@ Frustratingly in both cases case RStudio will give you a preview of the contents
 
 ### Errors from Inline LaTeX
 
+```{r latex inline errors bookmark}
+# Dummy code chunk to see where I fail
+```
+
 There's 1 main thing that causes knitting errors with LaTeX in-line expressions 
 
 **Leading and trailing spaces within the expression.** - You need to have the `$` right next to the in-line expression. There can't be a space after the opening `$` before you start your expression. There can't be a space before the trailing `$` after your expression. Like with the block errors, Rstudio will still render the inline latex preview just fine even though it won't work. 
@@ -627,6 +656,10 @@ $\sin\left(x + \frac{\pi}{2}\right) = \cos(x) $
 ```
 
 # R 
+
+```{r RLang bookmark}
+# Dummy code chunk to see where I fail
+```
 
 I didn't have time to prepare for R itself. We can cover it in a different week or we can just have you figure it out on your own time.
 
@@ -639,3 +672,7 @@ I didn't have time to prepare for R itself. We can cover it in a different week 
 - sample
 - pnorm,qnorm, rnorm, dnorm, etc.
 - Accessing model objects and the like.
+
+```{r end bookmark}
+# Dummy code chunk to see where I fail
+```
