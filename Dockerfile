@@ -1,12 +1,16 @@
-## kmartcontainers/w203:v0.4
+## kmartcontainers/w203:v0.5 
+## upgraded to R 4.2.2. Added HHmisc gapminder plotly cowplot reshape2 styler lintr.
 
 # Pull the base image from rocker
-FROM rocker/verse:4.0.4
+FROM rocker/verse:4.2.2
 # Add emacs editor
 RUN apt-get -y update && apt-get -y install emacs
 # Add libraries for w203 class
 # See: https://www.rocker-project.org/use/extending/
-RUN install2.r sandwich stargazer car gridExtra lmtest revealjs  wooldridge GGally PerformanceAnalytics patchwork moments ggthemes fec16 corrplot plotrix lfe
+RUN install2.r sandwich stargazer car gridExtra lmtest \
+revealjs  wooldridge GGally PerformanceAnalytics patchwork \
+moments ggthemes fec16 corrplot plotrix lfe Hmisc gapminder \
+plotly cowplot reshape2 styler lintr
 # Copy the math review and some notes into the folder
 COPY MathReview_v10.Rmd /home/rstudio/
 COPY ./KM-OH-Notes /home/rstudio/KM-OH-Notes

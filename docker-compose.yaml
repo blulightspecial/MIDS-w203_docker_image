@@ -1,0 +1,10 @@
+services:
+  rstudio:
+    image: "kmartcontainers/w203:latest"
+    ports: 
+      - "8788:8787"
+    volumes:
+      - ~:/home/rstudio/kitematic
+    environment:
+      # user name = rstudio
+      - PASSWORD=foo
