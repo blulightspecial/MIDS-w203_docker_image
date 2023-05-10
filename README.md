@@ -5,7 +5,7 @@ The image is available from dockerhub from `kmartcontainers/w203`
 ## System Requirements
 
 - 4 GB free storage
-- 64 bit chip architecture (no apple M1 chips :frown:)
+- 64 bit chip architecture (no apple M1 chips :disappointed:)
 - [Docker Installed](https://docs.docker.com/get-docker/)
 
 ## Using the image
