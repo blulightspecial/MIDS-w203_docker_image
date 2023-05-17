@@ -1,9 +1,7 @@
-## kmartcontainers/w203:v0.6 
-## Added janitor naniar skimr markdown ggthemes \
-	# flexdashboard plotly ggplotly reactable \
-	# bootstrap bootswatch
-## Captures significant update to tidyverse/stringr
-## Captures minor update to rstudio server
+## kmartcontainers/w203:v0.7
+## Kept tidyverse level the same
+  ## Mostly needed a few components for shiny dashboards
+  ## Notably the dev version of bslib for collapsilble nav bar
 
 # Pull the base image from rocker
 FROM rocker/verse:4.2.2
@@ -16,7 +14,8 @@ revealjs  wooldridge GGally PerformanceAnalytics patchwork \
 moments ggthemes fec16 corrplot plotrix lfe Hmisc gapminder \
 plotly cowplot reshape2 styler lintr janitor naniar skimr \
 markdown ggthemes flexdashboard plotly ggplotly reactable \
-bootstrap bootswatch
+bootstrap bootswatch thematic shinydashboard showtext bsicons
+RUN R -e "remotes::install_github('rstudio/bslib', quiet = TRUE, upgrade = 'always')"
 # Copy the math review and some notes into the folder
 COPY MathReview_v10.Rmd /home/rstudio/
 COPY ./KM-OH-Notes /home/rstudio/KM-OH-Notes
